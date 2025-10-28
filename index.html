@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EnergyIQ (TrackEnergy) — Forecasting Demo</title>
+  <style>
+    :root{--bg:#fff;--muted:#666;--accent:#0b74da;--card:#f7f9fb;--pad:18px}
+    body{font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:#111;margin:24px;max-width:1100px}
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between}
+    h1{margin:0;font-size:26px}
+    .muted{color:var(--muted);font-size:14px}
+    .grid{display:grid;gap:18px;margin-top:18px}
+    .two{grid-template-columns:1fr 360px}
+    .three{grid-template-columns:repeat(3,1fr)}
+    .card{background:var(--card);padding:var(--pad);border-radius:8px;box-shadow:0 1px 0 rgba(0,0,0,0.04)}
+    iframe{width:100%;height:315px;border:0;border-radius:6px}
+    img{width:100%;height:auto;border-radius:6px;border:1px solid rgba(0,0,0,0.04)}
+    pre{background:#fff;padding:12px;border-radius:6px;border:1px solid rgba(0,0,0,0.04);overflow:auto}
+    ul{margin:8px 0 0 18px}
+    .small{font-size:13px;color:var(--muted)}
+    footer{margin-top:22px;font-size:13px;color:var(--muted)}
+    @media (max-width:900px){.two,.three{grid-template-columns:1fr} iframe{height:220px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>EnergyIQ (TrackEnergy)</h1>
+      <div class="muted">Appliance-level monitoring and transparent time-series forecasts</div>
+    </div>
+    <div class="small">
+      <div><strong>Repo</strong><br><a href="https://github.com/tonna16/TrackEnergy" target="_blank">github.com/tonna16/TrackEnergy</a></div>
+      <div style="margin-top:8px"><strong>Contact</strong><br><a href="mailto:ttonnaagburu@gmail.com">ttonnaagburu@gmail.com</a></div>
+    </div>
+  </header>
+
+  <main class="grid">
+    <!-- Demo -->
+    <section class="card">
+      <h2 style="margin-top:0">Demo video</h2>
+      <p class="small">5-minute walkthrough showing dashboard, forecasting, and real-time alerts.</p>
+      <iframe src="https://www.youtube.com/watch?v=tlNz26ZmPZE" title="my energy tracker demo" allowfullscreen></iframe>
+    </section>
+
+    <!-- Quick facts -->
+    <aside class="card">
+      <h3 style="margin-top:0">Quick facts</h3>
+      <ul>
+        <li>Stack: React + TypeScript, Tailwind (UI), Spring Boot + JPA, PostgreSQL / H2, WebSockets, JWT</li>
+        <li>Modeling: Holt Linear & Holt-Winters additive (manual implementation)</li>
+        <li>Seasonality: 7-day weekly cycle</li>
+        <li>Guest mode + authenticated accounts</li>
+      </ul>
+    </aside>
+
+    <!-- Screenshots -->
+    <section class="card">
+      <h2 style="margin-top:0">Screenshots</h2>
+      <div class="grid three" style="margin-top:12px">
+        <div><strong>Dashboard</strong><br><img src="dashboard.png" alt="EnergyIQ dashboard screenshot"></div>
+        <div><strong>Appliances</strong><br><img src="appliance.png" alt="Appliance management screenshot"></div>
+        <div><strong>Actual vs Forecast</strong><br><img src="insights.png" alt="Actual vs forecast screenshot"></div>
+      </div>
+      <p class="small" style="margin-top:8px">Add these image files to the same folder as this HTML before publishing.</p>
+    </section>
+
+    <!-- Forecasting summary -->
+    <section class="card">
+      <h2 style="margin-top:0">Forecasting — short summary</h2>
+      <p class="small">
+        Model selection is data-driven. If appliance history &lt; 14 days, EnergyIQ uses Holt Linear (level + trend).
+        If history ≥ 14 days it uses Holt-Winters additive with a 7-day season to capture weekly patterns.
+        New appliances use a wattage×hours/day fallback with seasonal multipliers and bounded noise. Predictions are capped to avoid unrealistic spikes.
+      </p>
+
+      <h3 style="margin-bottom:6px">Representative evaluation</h3>
+      <p class="small">
+        These are example demonstration metrics from a simulated 30-day sample dataset. Actual results depend on user data.
+      </p>
+      <pre>MAE ≈ 0.24 kWh    RMSE ≈ 0.36 kWh    MAPE ≈ 4.8%</pre>
+    </section>
+
+    <!-- How to run -->
+    <section class="card">
+      <h2 style="margin-top:0">Run locally</h2>
+      <p class="small">Clone, run backend, then start frontend. Use H2 for demo mode.</p>
+      <pre>git clone https://github.com/tonna16/TrackEnergy
+cd TrackEnergy/backend
+mvn spring-boot:run
+# in separate shell
+cd TrackEnergy/frontend
+npm install
+npm run dev</pre>
+      <p class="small">See README in repo for full setup and environment variables.</p>
+    </section>
+
+    <!-- Roadmap / notes -->
+    <section class="card">
+      <h2 style="margin-top:0">Roadmap</h2>
+      <ul>
+        <li>Integrate real smart-plug telemetry and smart-meter APIs</li>
+        <li>Add adaptive ML per-home profiles</li>
+        <li>Improve PWA / mobile responsiveness</li>
+        <li>Public beta to collect real-world data and re-evaluate metrics</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="muted">
+    <div>Author: Tonna Agburu — <a href="mailto:ttonnaagburu@gmail.com">ttonnaagburu@gmail.com</a></div>
+    <div style="margin-top:6px">License: MIT · Source: <a href="https://github.com/tonna16/TrackEnergy" target="_blank">github.com/tonna16/TrackEnergy</a></div>
+  </footer>
+</body>
+</html>
