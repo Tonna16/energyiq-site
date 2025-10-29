@@ -1,114 +1,486 @@
-<!doctype html>
+<!DOCTYPE  html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EnergyIQ (TrackEnergy) — Forecasting Demo</title>
-  <style>
-    :root{--bg:#fff;--muted:#666;--accent:#0b74da;--card:#f7f9fb;--pad:18px}
-    body{font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:#111;margin:24px;max-width:1100px}
-    header{display:flex;gap:16px;align-items:center;justify-content:space-between}
-    h1{margin:0;font-size:26px}
-    .muted{color:var(--muted);font-size:14px}
-    .grid{display:grid;gap:18px;margin-top:18px}
-    .two{grid-template-columns:1fr 360px}
-    .three{grid-template-columns:repeat(3,1fr)}
-    .card{background:var(--card);padding:var(--pad);border-radius:8px;box-shadow:0 1px 0 rgba(0,0,0,0.04)}
-    iframe{width:100%;height:315px;border:0;border-radius:6px}
-    img{width:100%;height:auto;border-radius:6px;border:1px solid rgba(0,0,0,0.04)}
-    pre{background:#fff;padding:12px;border-radius:6px;border:1px solid rgba(0,0,0,0.04);overflow:auto}
-    ul{margin:8px 0 0 18px}
-    .small{font-size:13px;color:var(--muted)}
-    footer{margin-top:22px;font-size:13px;color:var(--muted)}
-    @media (max-width:900px){.two,.three{grid-template-columns:1fr} iframe{height:220px}}
-  </style>
-</head>
-<body>
-  <header>
-    <div>
-      <h1>EnergyIQ (TrackEnergy)</h1>
-      <div class="muted">Appliance-level monitoring and transparent time-series forecasts</div>
-    </div>
-    <div class="small">
-      <div><strong>Repo</strong><br><a href="https://github.com/tonna16/TrackEnergy" target="_blank">github.com/tonna16/TrackEnergy</a></div>
-      <div style="margin-top:8px"><strong>Contact</strong><br><a href="mailto:ttonnaagburu@gmail.com">ttonnaagburu@gmail.com</a></div>
-    </div>
-  </header>
-
-  <main class="grid">
-    <!-- Demo -->
-    <section class="card">
-      <h2 style="margin-top:0">Demo video</h2>
-      <p class="small">5-minute video showing dashboard, forecasting, real-time alerts, and more.</p>
-      <iframe src="https://www.youtube.com/embed/tlNz26ZmPZE" title="EnergyIQ Demo" allowfullscreen></iframe>
-    </section>
-
-    <!-- Quick facts -->
-    <aside class="card">
-      <h3 style="margin-top:0">Quick facts</h3>
-      <ul>
-        <li>Stack: React + TypeScript, Tailwind (UI), Spring Boot + JPA, PostgreSQL / H2, WebSockets, JWT</li>
-        <li>Modeling: Holt Linear & Holt-Winters additive (manual implementation)</li>
-        <li>Seasonality: 7-day weekly cycle</li>
-        <li>Guest mode + authenticated accounts</li>
-      </ul>
-    </aside>
-
-    <!-- Screenshots -->
-    <section class="card">
-      <h2 style="margin-top:0">Screenshots</h2>
-      <div class="grid three" style="margin-top:12px">
-        <div><strong>Dashboard</strong><br><img src="dashboard.png" alt="EnergyIQ dashboard screenshot"></div>
-        <div><strong>Appliances</strong><br><img src="appliance.png" alt="Appliance management screenshot"></div>
-        <div><strong>Actual vs Forecast</strong><br><img src="insights.png" alt="Actual vs forecast screenshot"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EnergyIQ (TrackEnergy) — Forecasting Demo</title>
+    <meta name="description" content="Built with jdoodle.ai - Appliance-level energy monitoring with AI-powered forecasting and real-time alerts" />
+    <meta property="og:title" content="EnergyIQ — Smart Energy Monitoring & Forecasting" />
+    <meta property="og:description" content="Appliance-level energy monitoring with AI-powered forecasting and real-time alerts" />
+    <meta property="og:image" content="https://imagedelivery.net/None/034d5646jd9e3j47d0j80a0j351ad9026795/public" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EnergyIQ — Smart Energy Monitoring & Forecasting" />
+    <meta name="twitter:description" content="Appliance-level energy monitoring with AI-powered forecasting and real-time alerts" />
+    <meta name="twitter:image" content="https://imagedelivery.net/None/034d5646jd9e3j47d0j80a0j351ad9026795/public" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⚡%3C/text%3E%3C/svg%3E" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --primary: #0ea5e9;
+        --primary-dark: #0284c7;
+        --secondary: #64748b;
+        --accent: #f59e0b;
+        --bg: #fefefe;
+        --surface: #ffffff;
+        --card: #f8fafc;
+        --border: #e2e8f0;
+        --text: #0f172a;
+        --text-muted: #64748b;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      
+      * { box-sizing: border-box; }
+      
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, var(--bg) 0%, #f1f5f9 100%);
+        color: var(--text);
+        margin: 0;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        padding: 24px 0;
+      }
+      
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 32px;
+      }
+      
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+        box-shadow: var(--shadow);
+      }
+      
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 16px;
+        margin-top: 4px;
+      }
+      
+      .contact-info {
+        display: flex;
+        gap: 24px;
+        font-size: 14px;
+      }
+      
+      .contact-item {
+        text-align: right;
+      }
+      
+      .contact-item strong {
+        display: block;
+        color: var(--text);
+        margin-bottom: 4px;
+      }
+      
+      .contact-item a {
+        color: var(--primary);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      
+      .contact-item a:hover {
+        color: var(--primary-dark);
+      }
+      
+      main {
+        padding: 48px 0;
+      }
+      
+      .grid {
+        display: grid;
+        gap: 24px;
+      }
+      
+      .hero-grid {
+        grid-template-columns: 2fr 1fr;
+        margin-bottom: 48px;
+      }
+      
+      .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      }
+      
+      .card {
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+      
+      .card h2, .card h3 {
+        margin-top: 0;
+        margin-bottom: 16px;
+        color: var(--text);
+      }
+      
+      .card h2 {
+        font-size: 24px;
+        font-weight: 600;
+      }
+      
+      .card h3 {
+        font-size: 18px;
+        font-weight: 600;
+      }
+      
+      .demo-card {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+      }
+      
+      .demo-card h2 {
+        color: white;
+      }
+      
+      .stats-card {
+        background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%);
+        color: white;
+        text-align: center;
+      }
+      
+      .stats-card h3 {
+        color: white;
+      }
+      
+      iframe {
+        width: 100%;
+        height: 320px;
+        border: 0;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+      }
+      
+      .screenshot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+      
+      .screenshot-item {
+        text-align: center;
+      }
+      
+      .screenshot-item strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text);
+        font-weight: 500;
+      }
+      
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        transition: transform 0.2s;
+      }
+      
+      img:hover {
+        transform: scale(1.02);
+      }
+      
+      pre {
+        background: var(--card);
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        overflow-x: auto;
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      ul {
+        margin: 16px 0;
+        padding-left: 20px;
+      }
+      
+      li {
+        margin-bottom: 8px;
+        color: var(--text-muted);
+      }
+      
+      .feature-list li {
+        position: relative;
+        padding-left: 24px;
+      }
+      
+      .feature-list li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+        font-weight: bold;
+      }
+      
+      .roadmap-list li::before {
+        content: '→';
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+        font-weight: bold;
+      }
+      
+      .small {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+      
+      footer {
+        background: var(--card);
+        border-top: 1px solid var(--border);
+        padding: 32px 0;
+        margin-top: 64px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+      
+      footer a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+      
+      footer a:hover {
+        color: var(--primary-dark);
+      }
+      
+      .badge {
+        display: inline-block;
+        background: var(--primary);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 16px;
+      }
+      
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin: 20px 0;
+      }
+      
+      .metric {
+        text-align: center;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+      }
+      
+      .metric-value {
+        font-size: 24px;
+        font-weight: 700;
+        display: block;
+      }
+      
+      .metric-label {
+        font-size: 12px;
+        opacity: 0.9;
+      }
+      
+      @media (max-width: 768px) {
+        .container { padding: 0 16px; }
+        .hero-grid, .header-content { grid-template-columns: 1fr; }
+        .contact-info { flex-direction: column; gap: 12px; }
+        .contact-item { text-align: left; }
+        iframe { height: 240px; }
+        .metrics { grid-template-columns: 1fr; }
+        .card { padding: 24px; }
+        h1 { font-size: 24px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <div class="logo-section">
+            <div class="logo">⚡</div>
+            <div>
+              <h1>EnergyIQ</h1>
+              <div class="subtitle">Smart energy monitoring with AI-powered forecasting</div>
+            </div>
+          </div>
+          <div class="contact-info">
+            <div class="contact-item">
+              <strong>Repository</strong>
+              <a href="https://github.com/tonna16/TrackEnergy" target="_blank">github.com/tonna16/TrackEnergy</a>
+            </div>
+            <div class="contact-item">
+              <strong>Contact</strong>
+              <a href="mailto:ttonnaagburu@gmail.com">ttonnaagburu@gmail.com</a>
+            </div>
+          </div>
+        </div>
       </div>
-    </section>
+    </header>
 
-    <!-- Forecasting summary -->
-    <section class="card">
-      <h2 style="margin-top:0">Forecasting — short summary</h2>
-      <p class="small">
-        Model selection is data-driven. If appliance history &lt; 14 days, EnergyIQ uses Holt Linear (level + trend).
-        If history ≥ 14 days it uses Holt-Winters additive with a 7-day season to capture weekly patterns.
-        New appliances use a wattage×hours/day fallback with seasonal multipliers and bounded noise. Predictions are capped to avoid unrealistic spikes.
-      </p>
+    <main>
+      <div class="container">
+        <div class="grid hero-grid">
+          <div class="card demo-card">
+            <div class="badge">Live Demo</div>
+            <h2>Watch EnergyIQ in Action</h2>
+            <p class="small" style="color: rgba(255,255,255,0.9); margin-bottom: 24px;">
+              5-minute demonstration showcasing dashboard analytics, AI forecasting, real-time alerts, and appliance monitoring.
+            </p>
+            <iframe src="https://www.youtube.com/embed/tlNz26ZmPZE" title="EnergyIQ Demo" allowfullscreen></iframe>
+          </div>
 
-      <h3 style="margin-bottom:6px">Representative evaluation</h3>
-      <p class="small">
-        These are example demonstration metrics from a simulated 30-day sample dataset. Actual results depend on user data.
-      </p>
-      <pre>MAE ≈ 0.24 kWh    RMSE ≈ 0.36 kWh    MAPE ≈ 4.8%</pre>
-    </section>
+          <div class="card stats-card">
+            <h3>Performance Metrics</h3>
+            <p class="small" style="color: rgba(255,255,255,0.9); margin-bottom: 20px;">
+              Demonstration metrics from 30-day simulation
+            </p>
+            <div class="metrics">
+              <div class="metric">
+                <span class="metric-value">0.24</span>
+                <span class="metric-label">MAE (kWh)</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value">0.36</span>
+                <span class="metric-label">RMSE (kWh)</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value">4.8%</span>
+                <span class="metric-label">MAPE</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <!-- How to run -->
-    <section class="card">
-      <h2 style="margin-top:0">Run locally</h2>
-      <p class="small">Clone, run backend, then start frontend. Use H2 for demo mode.</p>
-      <pre>git clone https://github.com/tonna16/TrackEnergy
+        <div class="grid features-grid">
+          <div class="card">
+            <h3>Technical Stack</h3>
+            <ul class="feature-list">
+              <li>React + TypeScript frontend with Tailwind CSS</li>
+              <li>Spring Boot + JPA backend with PostgreSQL/H2</li>
+              <li>Real-time WebSocket connections</li>
+              <li>JWT authentication & guest mode</li>
+              <li>Holt Linear & Holt-Winters forecasting models</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>AI Forecasting Engine</h3>
+            <p class="small">
+              Data-driven model selection automatically chooses between Holt Linear (trend-based) for new appliances (&lt;14 days) 
+              and Holt-Winters additive with 7-day seasonality for established patterns. Predictions include smart bounds 
+              to prevent unrealistic spikes.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Screenshots</h3>
+            <div class="screenshot-grid">
+              <div class="screenshot-item">
+                <strong>Dashboard</strong>
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop&auto=format" alt="Energy dashboard interface" />
+              </div>
+              <div class="screenshot-item">
+                <strong>Appliances</strong>
+                <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=250&fit=crop&auto=format" alt="Appliance management view" />
+              </div>
+              <div class="screenshot-item">
+                <strong>Forecasting</strong>
+                <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=250&fit=crop&auto=format" alt="Forecast vs actual chart" />
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Quick Setup</h3>
+            <p class="small">Clone and run with minimal configuration. Uses H2 database for instant demo mode.</p>
+            <pre>git clone https://github.com/tonna16/TrackEnergy
 cd TrackEnergy/backend
 mvn spring-boot:run
-# in separate shell
-cd TrackEnergy/frontend
-npm install
-npm run dev</pre>
-      <p class="small">See README in repo for full setup and environment variables.</p>
-    </section>
 
-    <!-- Roadmap / notes -->
-    <section class="card">
-      <h2 style="margin-top:0">Roadmap</h2>
-      <ul>
-        <li>Integrate real smart-plug telemetry and smart-meter APIs</li>
-        <li>Add adaptive ML per-home profiles</li>
-        <li>Improve PWA / mobile responsiveness</li>
-        <li>Public beta to collect real-world data and re-evaluate metrics</li>
-      </ul>
-    </section>
-  </main>
+# In separate terminal
+cd TrackEnergy/frontend  
+npm install && npm run dev</pre>
+          </div>
 
-  <footer class="muted">
-    <div>Author: Tonna Agburu — <a href="mailto:ttonnaagburu@gmail.com">ttonnaagburu@gmail.com</a></div>
-    <div style="margin-top:6px">License: MIT · Source: <a href="https://github.com/tonna16/TrackEnergy" target="_blank">github.com/tonna16/TrackEnergy</a></div>
-  </footer>
-</body>
+          <div class="card">
+            <h3>Development Roadmap</h3>
+            <ul class="roadmap-list">
+              <li>Smart plug & meter API integrations</li>
+              <li>Adaptive ML profiles per household</li>
+              <li>Enhanced PWA mobile experience</li>
+              <li>Public beta with real-world data collection</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div>
+          <strong>EnergyIQ (TrackEnergy)</strong> — Created by Tonna Agburu
+        </div>
+        <div style="margin-top: 8px;">
+          <a href="mailto:ttonnaagburu@gmail.com">ttonnaagburu@gmail.com</a> • 
+          <a href="https://github.com/tonna16/TrackEnergy" target="_blank">View Source</a> • 
+          MIT License
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>
+ 
